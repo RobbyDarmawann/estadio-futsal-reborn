@@ -74,7 +74,7 @@ export default function AdminBookingsPage() {
       console.log('Fetched bookings count:', data.length);
       const groups: { [key: string]: GroupedBooking } = {};
 
-      data.forEach((item) => {
+      data.forEach((item: any) => {
         const timeKey = new Date(item.created_at).getTime(); 
         const timeGroup = Math.floor(timeKey / 10000); 
 
