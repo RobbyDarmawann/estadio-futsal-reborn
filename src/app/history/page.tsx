@@ -77,7 +77,7 @@ export default function HistoryPage() {
       // 3. Logic Grouping (Menyatukan jam terpisah jadi satu kartu)
       const groups: { [key: string]: GroupedHistory } = {};
 
-      data.forEach((item) => {
+      data.forEach((item: any) => {
         // Grouping berdasarkan waktu pembuatan (toleransi detik) untuk menyatukan transaksi
         const timeKey = new Date(item.created_at).getTime(); 
         const timeGroup = Math.floor(timeKey / 10000); 
@@ -117,7 +117,7 @@ export default function HistoryPage() {
 
       // Inisialisasi countdown map untuk setiap group yang punya deadline
       const newCountdownMap: { [key: string]: number } = {};
-      groupedArray.forEach((item, idx) => {
+      groupedArray.forEach((item: any, idx: number) => {
         if (item.payment_deadline && item.status === 'pending' && item.payment_method !== 'transfer_bri') {
           const diff = Math.max(0, new Date(item.payment_deadline).getTime() - Date.now());
           newCountdownMap[`${idx}`] = Math.floor(diff / 1000);
