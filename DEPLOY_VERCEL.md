@@ -16,7 +16,9 @@ Vercel adalah platform hosting yang optimal untuk Next.js projects dan **gratis*
 
 ### 1a. Buat Repository GitHub (jika belum ada)
 - Buka https://github.com/new
-- Buat repo baru: misal `estadio-futsal-reborn`
+- Buat repo baru dengan nama: `estadio-futsal-reborn` atau `estadio_futsal_reborn`
+  - ✅ **Valid:** `estadio-futsal-reborn`, `estadio_futsal_reborn`, `EstadioFutsal`
+  - ❌ **Tidak valid:** `Estadio Futsal Reborn` (punya spasi), `estadio futsal` (punya spasi)
 - **Jangan** initialize with README (karena project sudah ada)
 
 ### 1b. Init Git & Push ke GitHub
@@ -34,7 +36,7 @@ git add .
 # Commit
 git commit -m "Initial commit - Estadio Futsal booking system"
 
-# Remote ke GitHub
+# Remote ke GitHub (ganti YOUR_USERNAME dan REPO_NAME)
 git remote add origin https://github.com/YOUR_USERNAME/estadio-futsal-reborn.git
 
 # Push ke branch main
@@ -42,7 +44,9 @@ git branch -M main
 git push -u origin main
 ```
 
-**Ganti `YOUR_USERNAME`** dengan username GitHub kamu.
+**Catatan:**
+- Ganti `YOUR_USERNAME` dengan username GitHub kamu
+- Ganti `estadio-futsal-reborn` dengan nama repo yang kamu buat (hanya huruf, angka, dash, underscore - NO SPACES!)
 
 ---
 
@@ -50,8 +54,8 @@ git push -u origin main
 
 File `env.local` berisi credentials sensitif. Pastikan sudah di `.gitignore`:
 
-```bash
-cat .gitignore | grep -i env
+```powershell
+Get-Content .gitignore | Select-String -Pattern 'env'
 ```
 
 Jika belum ada, tambahkan ke `.gitignore`:
