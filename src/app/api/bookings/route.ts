@@ -15,6 +15,19 @@ export async function GET(request: Request) {
       auth: { autoRefreshToken: false, persistSession: false },
     });
 
+    // Auto-cancel expired pending bookings (COD / bayar_ditempat) whose payment_deadline passed
+    try {
+      const nowIso = new Date().toISOString();
+      await supabaseAdmin
+        .from('bookings')
+        .update({ status: 'cancelled' })
+        .lt('payment_deadline', nowIso)
+        .eq('status', 'pending')
+        .neq('payment_method', 'transfer_bri');
+    } catch (e) {
+      console.error('Auto-cancel check failed:', e);
+    }
+
     // Fetch semua bookings dengan profiles relationship
     const { data, error } = await supabaseAdmin
       .from('bookings')
