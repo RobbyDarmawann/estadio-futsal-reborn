@@ -3,6 +3,7 @@
 import Navbar from "@/components/Navbar";
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
+import Toast from "@/components/Toast";
 import { useRouter } from "next/navigation";
 import { 
   Calendar, Clock, MapPin, CheckCircle, Info, 
@@ -26,6 +27,8 @@ export default function BookingPage() {
   const [paymentMethod, setPaymentMethod] = useState<"bri" | "cod" | null>(null);
   const [uploadFile, setUploadFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
 
   const PRICE_PER_HOUR = 150000;
   // Waktu tunggu pembayaran (menit). Ubah nilai ini untuk mengatur durasi timeout.
@@ -228,13 +231,15 @@ export default function BookingPage() {
           }
         }, WAIT_MINUTES * 60 * 1000);
 
-        // Tutup modal dan kembali ke halaman booking agar user melihat slot telah dibooking
+        // Tutup modal dan tampilkan toast lalu kembali ke halaman booking
         setShowPaymentModal(false);
-        alert("Booking berhasil! Silahkan lunasi pembayaran ke admin dalam waktu " + WAIT_MINUTES + " menit.");
-        router.push('/booking');
+        setToastMessage("Booking berhasil! Silahkan lunasi pembayaran ke admin dalam waktu " + WAIT_MINUTES + " menit.");
+        setShowToast(true);
+        setTimeout(() => router.push('/booking'), 1500);
       } else {
-        // Untuk transfer BRI langsung close modal seperti sebelumya
-        alert("Booking Berhasil! Silahkan tunggu konfirmasi Admin.");
+        // Untuk transfer BRI: tampilkan toast dan tutup modal
+        setToastMessage("Booking Berhasil! Silahkan tunggu konfirmasi Admin.");
+        setShowToast(true);
         setShowPaymentModal(false);
       }
 
@@ -517,6 +522,7 @@ export default function BookingPage() {
           </div>
         </div>
       )}
+      <Toast message={toastMessage} show={showToast} onClose={() => setShowToast(false)} />
     </main>
   );
 }
