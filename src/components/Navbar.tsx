@@ -143,11 +143,11 @@ export default function Navbar() {
              {user && (
                 <>
                   {/* 1. Mobile Notification Icon (BARU) */}
-                  <button className="relative p-2 text-gray-600 hover:text-red-600 transition rounded-full active:bg-gray-100">
+                  <Link href="/notifications" className="relative p-2 text-gray-600 hover:text-red-600 transition rounded-full active:bg-gray-100 flex items-center justify-center">
                     <Bell size={22} />
                     {/* Titik merah notifikasi */}
                     <span className="absolute top-2 right-2 w-2 h-2 bg-red-600 rounded-full border border-white"></span>
-                  </button>
+                  </Link>
 
                   {/* 2. Mobile Avatar */}
                   <div className="w-9 h-9 bg-red-100 text-red-600 rounded-full flex items-center justify-center text-xs font-bold border border-red-200">
