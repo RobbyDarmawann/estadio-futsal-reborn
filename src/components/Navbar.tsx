@@ -142,7 +142,6 @@ export default function Navbar() {
           <div className="md:hidden flex items-center gap-3">
              {user && (
                 <>
-                  {/* 1. Mobile Notification Icon (BARU) */}
                   <Link href="/notifications" className="relative p-2 text-gray-600 hover:text-red-600 transition rounded-full active:bg-gray-100 flex items-center justify-center">
                     <Bell size={22} />
                     {/* Titik merah notifikasi */}
