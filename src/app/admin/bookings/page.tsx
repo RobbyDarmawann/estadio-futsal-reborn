@@ -371,8 +371,16 @@ export default function AdminBookingsPage() {
                         const endH = (startH + 1) % 24;
                         const endLabel = endH === 0 ? "24" : endH.toString().padStart(2, '0');
                         const label = `${time}-${endLabel}:00`;
+                        
+                        // Cek apakah jam sudah lewat
+                        const now = new Date();
+                        const currentHour = now.getHours();
+                        const isToday = manualDate === now.toISOString().split('T')[0];
+                        const isPastTime = isToday && startH <= currentHour;
+                        const isDisabled = isBooked || isPastTime;
+                        
                         return (
-                          <button key={time} disabled={isBooked} onClick={() => toggleManualSlot(time)} className={`py-3 px-1 text-[11px] font-bold rounded border transition flex items-center justify-center ${isBooked ? 'bg-gray-100 text-gray-300 border-transparent cursor-not-allowed' : isSelected ? 'bg-red-600 text-white border-red-600 shadow-md transform scale-105' : 'bg-white text-gray-700 border-gray-200 hover:border-red-400 hover:text-red-600'}`}>{label}</button>
+                          <button key={time} disabled={isDisabled} onClick={() => toggleManualSlot(time)} className={`py-3 px-1 text-[11px] font-bold rounded border transition flex items-center justify-center ${isDisabled ? 'bg-gray-100 text-gray-300 border-transparent cursor-not-allowed' : isSelected ? 'bg-red-600 text-white border-red-600 shadow-md transform scale-105' : 'bg-white text-gray-700 border-gray-200 hover:border-red-400 hover:text-red-600'}`}>{label}</button>
                         )
                       })}
                     </div>
