@@ -5,12 +5,15 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import AdminSidebar from "@/components/AdminSidebar";
 import { Menu } from "lucide-react";
+import Toast from "@/components/Toast";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
 
   // --- SECURITY CHECK: ADMIN ONLY ---
   useEffect(() => {
@@ -25,7 +28,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           .single();
 
         if (profile?.role !== 'admin') {
-          alert('Akses Ditolak! Anda bukan Admin.');
+          setToastMessage('Akses Ditolak! Anda bukan Admin.');
+          setShowToast(true);
           router.push('/');
         } else {
           setIsAdmin(true);
@@ -108,6 +112,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <main className="flex-1 p-6 md:p-8">
           {children}
         </main>
+        <Toast message={toastMessage} show={showToast} onClose={() => setShowToast(false)} />
       </div>
     </div>
   );

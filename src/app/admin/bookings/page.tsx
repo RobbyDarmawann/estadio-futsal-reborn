@@ -6,6 +6,8 @@ import {
   Check, X, Eye, Calendar, Clock, MapPin, 
   CreditCard, Banknote, Plus, User, Loader2, Globe 
 } from "lucide-react";
+import Toast from "@/components/Toast";
+import ConfirmDialog from "@/components/ConfirmDialog";
 import Image from "next/image";
 
 // Tipe data Grouping
@@ -41,6 +43,10 @@ export default function AdminBookingsPage() {
   const [manualSlots, setManualSlots] = useState<string[]>([]);
   const [bookedSlotsDB, setBookedSlotsDB] = useState<string[]>([]); 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmConfig, setConfirmConfig] = useState<{ ids: number[]; newStatus: string; message: string; dangerous?: boolean }>({ ids: [], newStatus: "", message: "", dangerous: false });
 
   const PRICE_PER_HOUR = 150000;
 
@@ -57,7 +63,8 @@ export default function AdminBookingsPage() {
       if (!response.ok) {
         const errorData = await response.json();
         console.error('API Error:', errorData);
-        alert('Gagal fetch bookings: ' + (errorData.error || 'Unknown error'));
+        setToastMessage('Gagal fetch bookings: ' + (errorData.error || 'Unknown error'));
+        setShowToast(true);
         setLoading(false);
         return;
       }
@@ -118,7 +125,8 @@ export default function AdminBookingsPage() {
       setLoading(false);
     } catch (error: any) {
       console.error('Fetch bookings exception:', error.message);
-      alert('Exception: ' + error.message);
+      setToastMessage('Exception: ' + error.message);
+      setShowToast(true);
       setLoading(false);
     }
   };
@@ -152,7 +160,7 @@ export default function AdminBookingsPage() {
 
   // --- SUBMIT MANUAL BOOKING (VIA API) ---
   const handleManualSubmit = async () => {
-    if (!manualName || manualSlots.length === 0 || !manualPayment) return alert("Lengkapi data!");
+    if (!manualName || manualSlots.length === 0 || !manualPayment) { setToastMessage("Lengkapi data!"); setShowToast(true); return; }
     setIsSubmitting(true);
 
     try {
@@ -170,7 +178,8 @@ export default function AdminBookingsPage() {
 
       if (!response.ok) throw new Error("Gagal menyimpan data ke server");
 
-      alert("Booking Berhasil!");
+      setToastMessage("Booking Berhasil!");
+      setShowToast(true);
       setIsAddModalOpen(false);
       setManualName("");
       setManualSlots([]);
@@ -178,7 +187,8 @@ export default function AdminBookingsPage() {
       await fetchBookings(); 
 
     } catch (error: any) {
-      alert("Error: " + error.message);
+      setToastMessage("Error: " + error.message);
+      setShowToast(true);
     } finally {
       setIsSubmitting(false);
     }
@@ -187,7 +197,8 @@ export default function AdminBookingsPage() {
   // --- UPDATE STATUS (VIA API SERVER) ---
   const handleUpdateStatus = async (ids: number[], newStatus: string) => {
     const confirmMsg = newStatus === 'confirmed' ? "Setujui booking ini?" : "Tolak booking ini?";
-    if (!confirm(confirmMsg)) return;
+    setConfirmConfig({ ids, newStatus, message: confirmMsg, dangerous: newStatus !== 'confirmed' });
+    setConfirmOpen(true);
 
     try {
       const response = await fetch('/api/bookings', {
@@ -203,8 +214,11 @@ export default function AdminBookingsPage() {
 
       console.log('Status updated');
       await fetchBookings();
+      setToastMessage('Status berhasil diperbarui');
+      setShowToast(true);
     } catch (error: any) {
-      alert('Error: ' + error.message);
+      setToastMessage('Error: ' + error.message);
+      setShowToast(true);
     }
   };
 
@@ -411,6 +425,19 @@ export default function AdminBookingsPage() {
           </div>
         </div>
       )}
+
+      <ConfirmDialog
+        open={confirmOpen}
+        title={confirmConfig.newStatus === 'confirmed' ? 'Setujui Booking' : 'Tolak Booking'}
+        message={confirmConfig.message}
+        confirmText={confirmConfig.newStatus === 'confirmed' ? 'Setujui' : 'Tolak'}
+        cancelText={'Batal'}
+        dangerous={!!confirmConfig.dangerous}
+        onConfirm={() => { setConfirmOpen(false); handleUpdateStatus(confirmConfig.ids, confirmConfig.newStatus); }}
+        onCancel={() => setConfirmOpen(false)}
+      />
+
+      <Toast message={toastMessage} show={showToast} onClose={() => setShowToast(false)} />
     </div>
   );
 }

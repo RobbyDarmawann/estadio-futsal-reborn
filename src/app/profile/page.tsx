@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
+import Toast from "@/components/Toast";
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -17,6 +18,8 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
 
   // Form State
   const [fullName, setFullName] = useState("");
@@ -89,7 +92,8 @@ export default function ProfilePage() {
       setIsEditing(false);
       router.refresh(); // Refresh agar navbar update nama
     } else {
-      alert("Gagal mengupdate profil.");
+      setToastMessage("Gagal mengupdate profil.");
+      setShowToast(true);
     }
     
     setIsSaving(false);
@@ -255,5 +259,6 @@ export default function ProfilePage() {
         </div>
       </div>
     </main>
+    <Toast message={toastMessage} show={showToast} onClose={() => setShowToast(false)} />
   );
 }

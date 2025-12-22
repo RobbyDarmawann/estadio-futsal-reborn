@@ -115,7 +115,8 @@ export default function BookingPage() {
       setSelectedSlots(selectedSlots.filter((t) => t !== time));
     } else {
       if (selectedSlots.length >= 4) {
-        alert("Maksimal booking 4 jam per sesi!");
+        setToastMessage("Maksimal booking 4 jam per sesi!");
+        setShowToast(true);
         return;
       }
       setSelectedSlots([...selectedSlots, time].sort());
@@ -126,7 +127,8 @@ export default function BookingPage() {
   const handleBookingSubmit = async () => {
     // Jika memilih BRI, wajib upload bukti. Untuk COD tidak perlu upload di sini.
     if (paymentMethod === 'bri' && !uploadFile) {
-      alert("Wajib upload bukti pembayaran untuk transfer BRI!");
+      setToastMessage("Wajib upload bukti pembayaran untuk transfer BRI!");
+      setShowToast(true);
       return;
     }
     setIsSubmitting(true);
@@ -252,7 +254,8 @@ export default function BookingPage() {
 
     } catch (error: any) {
       console.error(error);
-      alert("Gagal melakukan booking: " + error.message);
+      setToastMessage("Gagal melakukan booking: " + error.message);
+      setShowToast(true);
     } finally {
       setIsSubmitting(false);
     }
@@ -483,7 +486,7 @@ export default function BookingPage() {
                                   setPaymentDeadline(null);
                                   setConfirmedCODBookingIds([]);
                                   setShowPaymentModal(false);
-                                } catch (err) { console.error(err); alert('Gagal batalkan booking'); }
+                                } catch (err) { console.error(err); setToastMessage('Gagal batalkan booking'); setShowToast(true); }
                               }} className="py-2 px-3 bg-red-600 text-white rounded font-bold">Batalkan Sekarang</button>
                             </div>
                           </>

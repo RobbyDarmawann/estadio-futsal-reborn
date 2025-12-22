@@ -9,12 +9,15 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
+import Toast from "@/components/Toast";
 
 export default function AdminProfilePage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
 
   // Data Admin
   const [profile, setProfile] = useState({
@@ -62,7 +65,7 @@ export default function AdminProfilePage() {
   };
 
   const handleUpdateProfile = async () => {
-    if (!editName.trim()) return alert("Nama tidak boleh kosong");
+    if (!editName.trim()) { setToastMessage("Nama tidak boleh kosong"); setShowToast(true); return; }
     setIsSaving(true);
 
     try {
@@ -81,11 +84,13 @@ export default function AdminProfilePage() {
 
       setProfile({ ...profile, fullName: editName });
       setIsEditing(false);
-      alert("Profil berhasil diperbarui!");
+      setToastMessage("Profil berhasil diperbarui!");
+      setShowToast(true);
       router.refresh();
 
     } catch (error: any) {
-      alert("Gagal update: " + error.message);
+      setToastMessage("Gagal update: " + error.message);
+      setShowToast(true);
     } finally {
       setIsSaving(false);
     }
@@ -256,5 +261,11 @@ export default function AdminProfilePage() {
         </div>
       </div>
     </div>
+    <Toast message={toastMessage} show={showToast} onClose={() => setShowToast(false)} />
   );
+}
+
+// Toast renderer
+export function ToastRenderer() {
+  return null;
 }
